@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bulk Registration - Fixed</title>
+    <link rel="stylesheet" href="bulkRegistration.css">
+    <link rel="stylesheet" href="Sidebar Files/sidebarstyle.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inria+Sans:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="sidebar-wrapper">
+        <div class="sidebar-header">
+            <img src="Sidebar Files/icons/Full Logo Blank.png" alt="Company Logo" id="sidebar-logo">
+            <img src="Sidebar Files/icons/Logo Blank.png" alt="Small Company Logo" id="sidebar-logo-collapsed">
+        </div>
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="#"><img src="Sidebar Files/icons/Dashborad.png" alt="Dashboard" class="nav-icon"><span class="nav-text">Dashboard</span></a></li>
+                    <li><a href="#"><img src="Sidebar Files/icons/Catalog.png" alt="Catalog" class="nav-icon"><span class="nav-text">Catalog</span></a></li>
+                    <li><a href="#"><img src="Sidebar Files/icons/register.svg" alt="Register Works" class="nav-icon"><span class="nav-text">Register Works</span></a></li>
+                    <li><a href="#"><img src="Sidebar Files/icons/Earnings.png" alt="Earnings" class="nav-icon"><span class="nav-text">Earnings</span></a></li>
+                    <li class="nav-spacer"><button id="sidebar-toggle" onclick="console.log('Button clicked via inline handler')"></button></li>
+                    <li><a href="#"><img src="Sidebar Files/icons/Profile.png" alt="Profile" class="nav-icon"><span class="nav-text">Profile</span></a></li>
+                    <li><a href="#"><img src="Sidebar Files/icons/Settings.png" alt="Settings" class="nav-icon"><span class="nav-text">Settings</span></a></li>
+                    <li><a href="#"><img src="Sidebar Files/icons/Log Out.png" alt="Logout" class="nav-icon"><span class="nav-text">Logout</span></a></li>
+                </ul>
+            </nav>
+            <div class="theme-switch-wrapper">
+                <label class="theme-switch" for="checkbox">
+                    <input type="checkbox" id="checkbox" />
+                    <div class="slider round"></div>
+                </label>
+                <span id="theme-label">Dark Mode</span>
+            </div>
+        </aside>
+    </div>
+    <div class="main-content">
+        <header class="bulk-header">
+            <h1>Register Work</h1>
+        </header>
+        
+        <div class="release-info-container">
+            <div class="number-of-registrations">
+                <span>Number of Registrations</span>
+                <div class="input-arrow-container">
+                    <input type="number" class="registration-count-input" value="1">
+                    <div class="arrow-container">
+                        <button class="arrow-up">▲</button>
+                        <button class="arrow-down">▼</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="labels-row">
+            <div class="registration-info-container">
+                <h2>Registration Information</h2>
+                <span class="import-title-text">Import</span>
+            </div>
+            <div class="label-spacer-1"></div>
+            <div class="content-id-container">
+                <h2>Content ID</h2>
+                <span class="required-fields-text">*At least one of these fields is required</span>
+            </div>
+            <div class="label-spacer-2"></div>
+            <h2>Split Type</h2>
+        </div>
+        
+        <div class="registration-rows-container">
+            <!-- Registration rows will be dynamically generated here -->
+        </div>
+        
+        <!-- Template for expandable row content -->
+        <template id="expandable-content-template">
+            <div class="additional-fields">
+                <h4>Writer Information</h4>
+                <div class="pie-chart-container">
+                    <canvas class="pie-chart writer-pie-chart"></canvas>
+                </div>
+                <div class="middle-info-top">
+                    <div class="additional-field-row">
+                        <input type="text" placeholder="Writer" class="additional-input writer-input">
+                        <input type="text" placeholder="Writer IPI" class="additional-input ipi-input">
+                        <input type="text" placeholder="Split" class="additional-input split-input">
+                    </div>
+                </div>
+                <div class="middle-info-bottom">
+                    <!-- Additional field rows will be added here dynamically -->
+                </div>
+                <div class="right-info-container">
+                    <div class="top-info-container" style="position: relative; min-height: 60px;">
+                        <span class="info-text" style="position: absolute; top: 0; left: 0; font-weight: 700; font-size: 14px; padding-left: 10px;">Artists</span>
+                        <hr style="position: absolute; top: 20px; left: 0; right: 0; border: none; border-top: 1px solid #ccc; margin: 0;">
+                        <div class="artists-list" style="position: absolute; top: 25px; left: 0; right: 0; font-size: 12px; color: #666; text-align: left; padding-left: 10px; max-height: 80px; overflow-y: auto;">
+                            <!-- Artists from database will be populated here -->
+                        </div>
+                    </div>
+                    <div class="bottom-info-container" style="position: relative; min-height: 60px;">
+                        <span class="info-text" style="position: absolute; top: 0; left: 0; font-weight: 700; font-size: 14px; padding-left: 10px;">Work Titles</span>
+                        <hr style="position: absolute; top: 20px; left: 0; right: 0; border: none; border-top: 1px solid #ccc; margin: 0;">
+                        <div class="titles-list" style="position: absolute; top: 25px; left: 0; right: 0; font-size: 12px; color: #666; text-align: left; padding-left: 10px; max-height: 80px; overflow-y: auto;">
+                            <!-- Work titles from database will be populated here -->
+                        </div>
+                    </div>
+                </div>
+                <div class="bottom-field-container">
+                    <div class="split-type-container" style="background-color: #007bff; padding: 10px; border-radius: 5px;">
+                        <span class="split-type-text" style="color: white; font-weight: bold;">Split Type: <span class="split-type-value" style="color: white; font-weight: bold;"></span></span>
+                        <div class="split-type-buttons">
+                            <button class="update-split-btn" style="color: white; font-weight: bold; background-color: #007bff;">Save</button>
+                            <button class="save-split-btn" style="color: white; font-weight: bold; background-color: #007bff;">Update</button>
+                        </div>
+                    </div>
+                    <div class="split-total-container">
+                        <span class="split-total-text">Writer Split Total: <span class="split-total-value"></span></span>
+                    </div>
+                </div>
+            </div>
+            <div class="additional-fields">
+                <h4>Publisher Information</h4>
+                <div class="pie-chart-container">
+                    <canvas class="pie-chart publisher-pie-chart"></canvas>
+                </div>
+                <div class="middle-info-top">
+                    <div class="additional-field-row">
+                        <input type="text" placeholder="Publisher" class="additional-input writer-input">
+                        <input type="text" placeholder="Publisher IPI" class="additional-input ipi-input">
+                        <input type="text" placeholder="Split" class="additional-input split-input">
+                    </div>
+                </div>
+                <div class="middle-info-bottom">
+                    <!-- Additional field rows will be added here dynamically -->
+                </div>
+                <div class="right-info-container">
+                    <div class="top-info-container" style="position: relative; min-height: 60px;">
+                        <span class="info-text" style="position: absolute; top: 0; left: 0; font-weight: 700; font-size: 14px; padding-left: 10px;">ISRCs</span>
+                        <hr style="position: absolute; top: 20px; left: 0; right: 0; border: none; border-top: 1px solid #ccc; margin: 0;">
+                        <div class="isrcs-list" style="position: absolute; top: 25px; left: 0; right: 0; font-size: 12px; color: #666; text-align: left; padding-left: 10px; max-height: 80px; overflow-y: auto;">
+                            <!-- ISRCs from database will be populated here -->
+                        </div>
+                    </div>
+                    <div class="bottom-info-container" style="position: relative; min-height: 60px;">
+                        <span class="info-text" style="position: absolute; top: 0; left: 0; font-weight: 700; font-size: 14px; padding-left: 10px;">ISWC</span>
+                        <hr style="position: absolute; top: 20px; left: 0; right: 0; border: none; border-top: 1px solid #ccc; margin: 0;">
+                        <div class="iswc-list" style="position: absolute; top: 25px; left: 0; right: 0; font-size: 12px; color: #666; text-align: left; padding-left: 10px;">
+                            <!-- ISWC from database will be populated here -->
+                        </div>
+                    </div>
+                </div>
+                <div class="bottom-field-container">
+                    <div class="split-type-container" style="background-color: #007bff; padding: 10px; border-radius: 5px;">
+                        <span class="split-type-text" style="color: white; font-weight: bold;">Clear data</span>
+                        <div class="split-type-buttons">
+                            <button class="update-split-btn" style="color: white; font-weight: bold; background-color: #007bff;">song information</button>
+                            <button class="save-split-btn" style="color: white; font-weight: bold; background-color: #007bff;">split information</button>
+                        </div>
+                    </div>
+                    <div class="split-total-container">
+                        <span class="split-total-text">Publisher Split Total: <span class="split-total-value"></span></span>
+                    </div>
+                </div>
+            </div>
+        </template>
+        
+
+        
+        <div class="submit-button-container">
+            <span class="export-csv-link">Export CSV</span>
+            <button class="save-draft-button">Save Draft</button>
+            <button class="submit-button">Review & Submit</button>
+        </div>
+    </div>
+    
+    <script src="Sidebar Files/sidebar.js"></script>
+    <script>
+        console.log('HTML script block executed');
+        console.log('testSidebarToggle available:', typeof testSidebarToggle);
+    </script>
+    <script src="js/databases.js"></script>
+    <script src="js/popups/dataSelectionPopup.js"></script>
+    <script src="js/popups/addTitlePopup.js"></script>
+    <script src="bulkRegistration-clean.js"></script>
+</body>
+</html> 
