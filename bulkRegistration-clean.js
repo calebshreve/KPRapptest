@@ -4857,7 +4857,7 @@ function populateIswcList(rowIndex) {
     iswcList.innerHTML = '';
     
     if (iswc.length === 0) {
-        iswcList.innerHTML = '<em style="font-style: italic; color: #999; font-size: 11px; line-height: 1.3;">ISWC (International Standard Musical Work Code) is a unique identifier for musical works. It helps identify and track musical compositions across different territories and systems.</em>';
+        iswcList.innerHTML = '<em style="font-style: italic; color: #999; font-size: 11px; line-height: 1.3;">ISWCs are only issued by PROs when a work\'s registration is accepted and reconciled. ISWCs are not issued by publishers in the same manner that ISRCs can be issued by distributors for the release of a sound recording.</em>';
     } else {
         iswc.forEach(code => {
             const iswcItem = document.createElement('div');
