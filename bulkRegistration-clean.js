@@ -5939,12 +5939,49 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Add event delegation for link-to-publisher clicks
-        if (e.target.classList.contains('link-to-publisher') && 
-            e.target.textContent === 'Link to Publisher') {
-            const writerRow = e.target.closest('.additional-field-row');
-            const expandableContent = writerRow.closest('.expandable-content');
-            const rowIndex = Array.from(document.querySelectorAll('.registration-row')).indexOf(expandableContent.previousElementSibling);
-            showLinkPublisherPopup(writerRow, rowIndex);
+        if (e.target.classList.contains('link-to-publisher')) {
+            console.log('Event delegation: link-to-publisher clicked, text:', e.target.textContent);
+            console.log('Event delegation: target element:', e.target);
+            console.log('Event delegation: current target:', e.currentTarget);
+            if (e.target.textContent === 'Link to Publisher') {
+                console.log('Event delegation: handling "Link to Publisher" click');
+                const writerRow = e.target.closest('.additional-field-row');
+                const expandableContent = writerRow.closest('.expandable-content');
+                const rowIndex = Array.from(document.querySelectorAll('.registration-row')).indexOf(expandableContent.previousElementSibling);
+                showLinkPublisherPopup(writerRow, rowIndex);
+            } else if (e.target.textContent === 'Linked') {
+                console.log('Event delegation: handling "Linked" click');
+                // Handle clicks on "Linked" text to reopen the popup
+                const clickedRow = e.target.closest('.additional-field-row');
+                const expandableContent = clickedRow.closest('.expandable-content');
+                const rowIndex = Array.from(document.querySelectorAll('.registration-row')).indexOf(expandableContent.previousElementSibling);
+                
+                // Check if this is a writer row or publisher row
+                const isWriterRow = clickedRow.closest('.additional-fields:first-child') !== null;
+                
+                if (isWriterRow) {
+                    // This is a writer row, open popup directly
+                    showLinkPublisherPopup(clickedRow, rowIndex);
+                } else {
+                    // This is a publisher row, find the corresponding writer row
+                    const writerContainer = expandableContent?.querySelector('.additional-fields:first-child');
+                    if (writerContainer) {
+                        const clickedInputs = clickedRow.querySelectorAll('input');
+                        const clickedName = clickedInputs[0]?.value || '';
+                        
+                        const writerRows = writerContainer.querySelectorAll('.additional-field-row');
+                        for (const writerRow of writerRows) {
+                            const writerInputs = writerRow.querySelectorAll('input');
+                            const writerName = writerInputs[0]?.value || '';
+                            
+                            if (writerName === clickedName) {
+                                showLinkPublisherPopup(writerRow, rowIndex);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
         }
     });
     

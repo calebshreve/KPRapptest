@@ -281,49 +281,6 @@ function showLinkPublisherPopup(writerRow, rowIndex) {
         });
     });
     
-    // Pre-populate existing split values if this is an edit (writer is already linked)
-    const existingLinkText = writerRow.querySelector('.link-to-publisher');
-    if (existingLinkText && existingLinkText.textContent === 'Linked') {
-        // Find existing split values from the writer's current splits
-        const expandableContent = document.querySelectorAll('.registration-row')[rowIndex]?.nextElementSibling;
-        if (expandableContent && expandableContent.classList.contains('expandable-content')) {
-            const writerContainer = expandableContent.querySelector('.additional-fields:first-child');
-            if (writerContainer) {
-                const writerRows = writerContainer.querySelectorAll('.additional-field-row');
-                writerRows.forEach((writerRow, writerIndex) => {
-                    const writerInputs = writerRow.querySelectorAll('input');
-                    const writerName = writerInputs[0]?.value || '';
-                    
-                    // Find matching publisher and populate splits
-                    publisherItems.forEach(item => {
-                        if (item.publisher.name === writerName) {
-                            const performanceSplit = writerInputs[2]?.value || '0';
-                            const mechanicalsSplit = writerInputs[3]?.value || '0';
-                            
-                            item.performanceInput.value = performanceSplit;
-                            item.mechanicalsInput.value = mechanicalsSplit;
-                        }
-                    });
-                });
-            }
-        }
-        
-        // Update totals after pre-populating
-        updateTotal();
-        
-        // Expand popup if there are mechanical splits
-        const hasMechanicals = publisherItems.some(item => parseFloat(item.mechanicalsInput.value) > 0);
-        if (hasMechanicals) {
-            popupContent.style.maxWidth = '500px';
-            publisherItems.forEach(item => {
-                item.mechanicalsContainer.style.display = 'flex';
-            });
-            mechanicalsTotalValue.style.display = 'inline';
-            toggleButton.textContent = '< less detail';
-            isExpanded = true;
-        }
-    }
-    
     // Add total display
     const totalContainer = document.createElement('div');
     totalContainer.style.cssText = `
@@ -374,6 +331,63 @@ function showLinkPublisherPopup(writerRow, rowIndex) {
     totalContainer.appendChild(totalLabel);
     totalContainer.appendChild(totalsRow);
     
+    // Define updateTotal function before using it anywhere
+    function updateTotal() {
+        const performanceTotal = publisherItems.reduce((sum, item) => {
+            return sum + (parseFloat(item.performanceInput.value) || 0);
+        }, 0);
+        
+        const mechanicalsTotal = publisherItems.reduce((sum, item) => {
+            return sum + (parseFloat(item.mechanicalsInput.value) || 0);
+        }, 0);
+        
+        // Format totals to show decimals only when needed
+        const formatPercentage = (value) => {
+            return value % 1 === 0 ? value + '%' : value.toFixed(2) + '%';
+        };
+        
+        performanceTotalValue.textContent = formatPercentage(performanceTotal);
+        mechanicalsTotalValue.textContent = formatPercentage(mechanicalsTotal);
+    }
+    
+    // Pre-populate existing split values if this is an edit (writer is already linked)
+    const existingLinkText = writerRow.querySelector('.link-to-publisher');
+    if (existingLinkText && existingLinkText.textContent === 'Linked' && writerRow.linkData) {
+        console.log('Pre-populating with stored link data (reopening popup):', writerRow.linkData);
+        console.log('Linked publishers count:', writerRow.linkData.linkedPublishers.length);
+        
+        // Use the stored link data to populate the splits
+        const storedLinkData = writerRow.linkData;
+        
+        publisherItems.forEach(item => {
+            // Find matching publisher in stored data
+            const storedPublisher = storedLinkData.linkedPublishers.find(pub => 
+                pub.publisher.name === item.publisher.name
+            );
+            
+            if (storedPublisher) {
+                item.performanceInput.value = storedPublisher.performanceSplit.toString();
+                item.mechanicalsInput.value = storedPublisher.mechanicalsSplit.toString();
+                console.log(`Populated ${item.publisher.name}: Performance=${storedPublisher.performanceSplit}%, Mechanicals=${storedPublisher.mechanicalsSplit}%`);
+            }
+        });
+        
+        // Update totals after pre-populating
+        updateTotal();
+        
+        // Expand popup if there are mechanical splits
+        const hasMechanicals = publisherItems.some(item => parseFloat(item.mechanicalsInput.value) > 0);
+        if (hasMechanicals) {
+            popupContent.style.maxWidth = '500px';
+            publisherItems.forEach(item => {
+                item.mechanicalsContainer.style.display = 'flex';
+            });
+            mechanicalsTotalValue.style.display = 'inline';
+            toggleButton.textContent = '< less detail';
+            isExpanded = true;
+        }
+    }
+    
     // Add input validation and total calculation
     publisherItems.forEach(item => {
         item.performanceInput.addEventListener('input', function() {
@@ -399,24 +413,6 @@ function showLinkPublisherPopup(writerRow, rowIndex) {
             }
         });
     });
-    
-    function updateTotal() {
-        const performanceTotal = publisherItems.reduce((sum, item) => {
-            return sum + (parseFloat(item.performanceInput.value) || 0);
-        }, 0);
-        
-        const mechanicalsTotal = publisherItems.reduce((sum, item) => {
-            return sum + (parseFloat(item.mechanicalsInput.value) || 0);
-        }, 0);
-        
-        // Format totals to show decimals only when needed
-        const formatPercentage = (value) => {
-            return value % 1 === 0 ? value + '%' : value.toFixed(2) + '%';
-        };
-        
-        performanceTotalValue.textContent = formatPercentage(performanceTotal);
-        mechanicalsTotalValue.textContent = formatPercentage(mechanicalsTotal);
-    }
     
     // Toggle functionality
     let isExpanded = false;
@@ -550,7 +546,20 @@ function showLinkPublisherPopup(writerRow, rowIndex) {
         font-size: 14px;
     `;
     
-    linkButton.addEventListener('click', () => {
+    linkButton.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        console.log('Link Publishers button clicked');
+        
+        // Log all input values for debugging
+        console.log('All publisher input values:');
+        publisherItems.forEach((item, index) => {
+            console.log(`Publisher ${index + 1} (${item.publisher.name}):`, {
+                performance: item.performanceInput.value,
+                mechanicals: item.mechanicalsInput.value
+            });
+        });
+        
         const performanceTotal = publisherItems.reduce((sum, item) => {
             return sum + (parseFloat(item.performanceInput.value) || 0);
         }, 0);
@@ -561,21 +570,69 @@ function showLinkPublisherPopup(writerRow, rowIndex) {
         
         const writerTotal = parseFloat(writerShare) || 0;
         
+        console.log('Validation values:', {
+            performanceTotal,
+            mechanicalsTotal,
+            writerTotal,
+            writerShare
+        });
+        
+        // Check if any publishers have splits assigned
+        const hasSplits = publisherItems.some(item => {
+            const performance = parseFloat(item.performanceInput.value) || 0;
+            const mechanicals = parseFloat(item.mechanicalsInput.value) || 0;
+            return performance > 0 || mechanicals > 0;
+        });
+        
+        if (!hasSplits) {
+            console.log('No splits assigned - validation failed');
+            alert('Please assign at least one split to a publisher before linking.');
+            return;
+        }
+        
         if (performanceTotal > writerTotal) {
+            console.log('Performance total exceeds writer total - validation failed');
             alert(`Performance share (${performanceTotal.toFixed(2)}%) cannot exceed the writer's share (${writerTotal}%).`);
             return;
         }
         
         if (mechanicalsTotal > writerTotal) {
+            console.log('Mechanicals total exceeds writer total - validation failed');
             alert(`Mechanical share (${mechanicalsTotal.toFixed(2)}%) cannot exceed the writer's share (${writerTotal}%).`);
             return;
         }
         
+        console.log('Validation passed - proceeding with linking');
+        
         // Perform the linking logic here
         linkWriterToPublishers(writerRow, rowIndex, publisherItems);
         
+        console.log('Linking completed - closing popup');
+        
         // Close popup
-        document.body.removeChild(popup);
+        try {
+            console.log('Attempting to remove popup from DOM');
+            if (popup && popup.parentNode) {
+                document.body.removeChild(popup);
+                console.log('Popup successfully removed');
+            } else {
+                console.log('Popup element not found or already removed');
+                // Try alternative removal method
+                const existingPopup = document.querySelector('.popup-overlay');
+                if (existingPopup) {
+                    existingPopup.remove();
+                    console.log('Popup removed via alternative method');
+                }
+            }
+        } catch (error) {
+            console.error('Error removing popup:', error);
+            // Try alternative removal method
+            const existingPopup = document.querySelector('.popup-overlay');
+            if (existingPopup) {
+                existingPopup.remove();
+                console.log('Popup removed via error recovery method');
+            }
+        }
     });
     
     rightSideContainer.appendChild(cancelButton);
@@ -593,6 +650,7 @@ function showLinkPublisherPopup(writerRow, rowIndex) {
     
     // Add to page
     document.body.appendChild(popup);
+    console.log('Popup added to DOM, element:', popup);
     
     // Close popup when clicking outside
     popup.addEventListener('click', (e) => {
@@ -610,6 +668,7 @@ function showLinkPublisherPopup(writerRow, rowIndex) {
  */
 function linkWriterToPublishers(writerRow, rowIndex, publisherItems) {
     console.log('linkWriterToPublishers called:', { rowIndex, publisherItems });
+    console.log('Setting up click handlers for "Linked" text...');
     
     // Filter publishers that have splits assigned
     const linkedPublishers = publisherItems.filter(item => {
@@ -647,26 +706,22 @@ function linkWriterToPublishers(writerRow, rowIndex, publisherItems) {
             };
             
             linkText.textContent = 'Linked';
+            console.log('Writer link text updated to "Linked"');
             
             linkText.style.color = '#28a745';
             linkText.style.cursor = 'pointer';
             
-            // Add click handler to open link publisher popup for editing
-            linkText.onclick = () => {
-                const rowIndex = Array.from(document.querySelectorAll('.registration-row')).indexOf(writerRow);
-                showLinkPublisherPopup(writerRow, rowIndex);
-            };
+            // Remove any existing click handlers to avoid conflicts with event delegation
+            linkText.onclick = null;
         } else {
             // Multiple publishers
             linkText.textContent = 'Linked';
+            console.log('Writer link text updated to "Linked" (multiple publishers)');
             linkText.style.color = '#28a745';
             linkText.style.cursor = 'pointer';
             
-            // Add click handler to open link publisher popup for editing
-            linkText.onclick = () => {
-                const rowIndex = Array.from(document.querySelectorAll('.registration-row')).indexOf(writerRow);
-                showLinkPublisherPopup(writerRow, rowIndex);
-            };
+            // Remove any existing click handlers to avoid conflicts with event delegation
+            linkText.onclick = null;
         }
     }
     
@@ -675,8 +730,12 @@ function linkWriterToPublishers(writerRow, rowIndex, publisherItems) {
         const publisherLinkText = item.publisher.row.querySelector('.link-to-publisher');
         if (publisherLinkText) {
             publisherLinkText.textContent = 'Linked';
+            console.log('Publisher link text updated to "Linked"');
             publisherLinkText.style.color = '#28a745';
             publisherLinkText.style.cursor = 'pointer';
+            
+            // Remove any existing click handlers to avoid conflicts with event delegation
+            publisherLinkText.onclick = null;
         }
     });
     
@@ -693,6 +752,18 @@ function linkWriterToPublishers(writerRow, rowIndex, publisherItems) {
     };
     
     console.log('Writer linked to publishers:', linkData);
+    
+    // Store the link data on the writer row for later retrieval
+    const previousData = writerRow.linkData;
+    writerRow.linkData = linkData;
+    
+    if (previousData) {
+        console.log('Updated existing link data:');
+        console.log('Previous data:', previousData);
+        console.log('New data:', linkData);
+    } else {
+        console.log('Stored new link data on writer row:', writerRow.linkData);
+    }
     
     // You can add additional logic here, such as:
     // - Saving to localStorage
