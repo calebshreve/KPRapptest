@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bulk Registration - Fixed</title>
+    <link rel="stylesheet" href="bulkRegistration.css">
+    <link rel="stylesheet" href="Sidebar Files/sidebarstyle.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inria+Sans:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="sidebar-wrapper">
+        <div class="sidebar-header">
+            <img src="Sidebar Files/icons/Full Logo Blank.png" alt="Company Logo" id="sidebar-logo">
+            <img src="Sidebar Files/icons/Logo Blank.png" alt="Small Company Logo" id="sidebar-logo-collapsed">
+        </div>
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="#"><img src="Sidebar Files/icons/Dashborad.png" alt="Dashboard" class="nav-icon"><span class="nav-text">Dashboard</span></a></li>
+                    <li><a href="#"><img src="Sidebar Files/icons/Catalog.png" alt="Catalog" class="nav-icon"><span class="nav-text">Catalog</span></a></li>
+                    <li><a href="#"><img src="Sidebar Files/icons/register.svg" alt="Register Works" class="nav-icon"><span class="nav-text">Register Works</span></a></li>
+                    <li><a href="#"><img src="Sidebar Files/icons/Earnings.png" alt="Earnings" class="nav-icon"><span class="nav-text">Earnings</span></a></li>
+                    <li class="nav-spacer"><button id="sidebar-toggle" onclick="console.log('Button clicked via inline handler')"></button></li>
+                    <li><a href="#"><img src="Sidebar Files/icons/Profile.png" alt="Profile" class="nav-icon"><span class="nav-text">Profile</span></a></li>
+                    <li><a href="#"><img src="Sidebar Files/icons/Settings.png" alt="Settings" class="nav-icon"><span class="nav-text">Settings</span></a></li>
+                    <li><a href="#"><img src="Sidebar Files/icons/Log Out.png" alt="Logout" class="nav-icon"><span class="nav-text">Logout</span></a></li>
+                </ul>
+            </nav>
+            <div class="theme-switch-wrapper">
+                <label class="theme-switch" for="checkbox">
+                    <input type="checkbox" id="checkbox" />
+                    <div class="slider round"></div>
+                </label>
+                <span id="theme-label">Dark Mode</span>
+            </div>
+        </aside>
+    </div>
+    <div class="main-content">
+
+        
+        <header class="bulk-header">
+            <h1>Register Work</h1>
+        </header>
+        
+        <div class="release-info-container">
+            <div class="number-of-registrations">
+                <span>Number of Registrations</span>
+                <div class="input-arrow-container">
+                    <input type="number" class="registration-count-input" value="1">
+                    <div class="arrow-container">
+                        <button class="arrow-up">▲</button>
+                        <button class="arrow-down">▼</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="labels-row">
+            <div class="registration-info-container">
+                <h2>Registration Information</h2>
+                <span class="import-title-text">Import</span>
+            </div>
+            <div class="label-spacer-1"></div>
+            <div class="content-id-container">
+                <h2>Content ID</h2>
+                <span class="required-fields-text">*At least one of these fields is required</span>
+            </div>
+            <div class="label-spacer-2"></div>
+            <h2>Split Type</h2>
+        </div>
+        
+        <div class="registration-rows-container">
+            <!-- Registration rows will be dynamically generated here -->
+        </div>
+        
+        <!-- Template for expandable row content -->
+        <template id="expandable-content-template">
+            <div class="additional-fields">
+                <div class="additional-fields-header">
+                    <div class="split-type-container" style="background-color: #007bff; padding: 10px;">
+                        <span class="split-type-text" style="color: white; font-weight: bold;">Split Type: <span class="split-type-value" style="color: white; font-weight: bold;"></span></span>
+                        <div class="split-type-buttons">
+                            <button class="update-split-btn" style="color: white; font-weight: bold; background-color: #007bff;">Save</button>
+                            <button class="save-split-btn" style="color: white; font-weight: bold; background-color: #007bff;">Update</button>
+                        </div>
+                    </div>
+                    <div class="recording-release-container">
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <span class="checkbox-text">Was this recorded?</span>
+                                <input type="checkbox" class="recording-checkbox">
+                            </label>
+                        </div>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <span class="checkbox-text">Was this released?</span>
+                                <input type="checkbox" class="release-checkbox">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="additional-fields-content">
+                    <div class="pie-chart-container">
+                        <canvas class="pie-chart writer-pie-chart"></canvas>
+                    </div>
+                    <div class="middle-info-main-container">
+                        <h4 class="middle-info-title">Writer Information</h4>
+                        <div class="middle-info-top">
+                            <div class="additional-field-row">
+                                <button class="remove-row-btn">-</button>
+                                <input type="text" placeholder="Writer" class="additional-input writer-input">
+                                <input type="text" placeholder="Writer IPI" class="additional-input ipi-input">
+                                <input type="text" placeholder="Split" class="additional-input split-input">
+                                <span class="link-to-publisher">Link to Publisher</span>
+                            </div>
+                        </div>
+                        <div class="split-total-text">Writer Split Total: <span class="split-total-value"></span></div>
+                    </div>
+                    <div class="right-info-container">
+                        <div class="top-info-container">
+                            <span class="info-text">Artists</span>
+                            <hr>
+                            <div class="artists-list">
+                                <!-- Artists from database will be populated here -->
+                            </div>
+                        </div>
+                        <div class="bottom-info-container">
+                            <span class="info-text">Work Titles</span>
+                            <hr>
+                            <div class="titles-list">
+                                <!-- Work titles from database will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="additional-fields">
+                <div class="additional-fields-content">
+                    <div class="pie-chart-container">
+                        <canvas class="pie-chart publisher-pie-chart"></canvas>
+                    </div>
+                    <div class="middle-info-main-container">
+                        <h4 class="middle-info-title">Publisher Information</h4>
+                        <div class="middle-info-top">
+                            <div class="additional-field-row">
+                                <button class="remove-row-btn">-</button>
+                                <input type="text" placeholder="Publisher" class="additional-input writer-input">
+                                <input type="text" placeholder="Publisher IPI" class="additional-input ipi-input">
+                                <input type="text" placeholder="Split" class="additional-input split-input">
+                                <span class="link-to-publisher" style="cursor: default; color: #6c757d;">unlinked</span>
+                            </div>
+                        </div>
+                        <div class="split-total-text">Publisher Split Total: <span class="split-total-value"></span></div>
+                    </div>
+                    <div class="right-info-container">
+                        <div class="top-info-container">
+                            <span class="info-text">ISRCs</span>
+                            <hr>
+                            <div class="isrcs-list">
+                                <!-- ISRCs from database will be populated here -->
+                            </div>
+                        </div>
+                        <div class="bottom-info-container">
+                            <span class="info-text">ISWC</span>
+                            <hr>
+                            <div class="iswc-list">
+                                <!-- ISWC from database will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="additional-fields-footer">
+                    <div class="split-type-container" style="background-color: #007bff; padding: 10px;">
+                        <span class="split-type-text" style="color: white; font-weight: bold;">Clear data</span>
+                        <div class="split-type-buttons">
+                            <button class="update-split-btn" style="color: white; font-weight: bold; background-color: #007bff;">song information</button>
+                            <button class="save-split-btn" style="color: white; font-weight: bold; background-color: #007bff;">split information</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+        
+
+        
+        <div class="submit-button-container">
+            <span class="export-csv-link">Export CSV</span>
+            <button class="save-draft-button">Save Draft</button>
+            <button class="submit-button">Review & Submit</button>
+        </div>
+    </div>
+    
+    <script src="Sidebar Files/sidebar.js"></script>
+    <script>
+        console.log('HTML script block executed');
+        console.log('testSidebarToggle available:', typeof testSidebarToggle);
+        
+        // Function to print container border colors
+        function printContainerColors() {
+            const colorMappings = {
+                'Additional Fields (Main Container)': '#FF6B6B',
+                'Pie Chart Container': '#4ECDC4',
+                'Middle Info Main Container': '#FF8C42',
+                'Middle Info Top': '#45B7D1',
+                'Middle Info Bottom': '#96CEB4',
+                'Right Info Container': '#FFEAA7',
+                'Top Info Container': '#DDA0DD',
+                'Bottom Info Container': '#98D8C8',
+                'Bottom Field Container': '#F7DC6F',
+                'Split Type Container': '#BB8FCE',
+                'Split Total Container': '#85C1E9'
+            };
+            
+            console.log('=== Container Border Color Mappings ===');
+            Object.entries(colorMappings).forEach(([container, color]) => {
+                console.log(`${container}: ${color}`);
+            });
+            console.log('=====================================');
+        }
+        
+        // Print colors when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            printContainerColors();
+        });
+    </script>
+    <script src="js/databases.js"></script>
+    <script src="js/popups/dataSelectionPopup.js"></script>
+    <script src="js/popups/addTitlePopup.js"></script>
+    <script src="js/popups/linkPublisher.js"></script>
+    <script src="bulkRegistration-clean.js"></script>
+</body>
+</html> 
