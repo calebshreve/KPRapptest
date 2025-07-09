@@ -5,14 +5,16 @@ const songDatabase = [
         artistName: "Queen",
         ISWC: "T-000.000.001-0",
         ISRC: "GBUM71029604",
-        splitType: 1
+        splitType: 1,
+        splitNickname: "Freddie and Brian"
     },
     {
         songTitle: "Hotel California",
         artistName: "Eagles",
         ISWC: "T-000.000.002-0",
         ISRC: "USRC17607839",
-        splitType: 2
+        splitType: 2,
+        splitNickname: "Don"
     },
     {
         songTitle: "Imagine",
@@ -20,6 +22,7 @@ const songDatabase = [
         ISWC: "T-000.000.003-0",
         ISRC: "USRC17607840",
         splitType: 3,
+        splitNickname: "John and Paul",
         additionalArtists: ["The Beatles"],
         additionalTitles: ["All You Need Is Love"],
         additionalISRCs: ["USRC17607843", "USRC17607844", "USRC17607845", "USRC17607846"]
@@ -29,20 +32,23 @@ const songDatabase = [
         artistName: "Led Zeppelin",
         ISWC: "T-000.000.004-0",
         ISRC: "USRC17607841",
-        splitType: 4
+        splitType: 4,
+        splitNickname: "Jimmy"
     },
     {
         songTitle: "Like a Rolling Stone",
         artistName: "Bob Dylan",
         ISWC: "T-000.000.005-0",
         ISRC: "USRC17607842",
-        splitType: 5
+        splitType: 5,
+        splitNickname: "Bob"
     }
 ];
 
 // Split database for detailed split information
 const splitDatabase = [
     {
+        splitNickname: "Freddie and Brian",
         splitType: 1,
         writerName: "Freddie Mercury",
         writerIPI: "00012345678",
@@ -58,6 +64,7 @@ const splitDatabase = [
         publisherShare2: 50
     },
     {
+        splitNickname: "Don",
         splitType: 2,
         writerName: "Don Henley",
         writerIPI: "00023456789",
@@ -67,6 +74,7 @@ const splitDatabase = [
         publisherShare: 40
     },
     {
+        splitNickname: "John and Paul",
         splitType: 3,
         writerName: "John Lennon",
         writerIPI: "00034567890",
@@ -82,6 +90,7 @@ const splitDatabase = [
         publisherShare2: 50
     },
     {
+        splitNickname: "Jimmy",
         splitType: 4,
         writerName: "Jimmy Page",
         writerIPI: "00045678901",
@@ -91,6 +100,7 @@ const splitDatabase = [
         publisherShare: 50
     },
     {
+        splitNickname: "Bob",
         splitType: 5,
         writerName: "Bob Dylan",
         writerIPI: "00056789012",

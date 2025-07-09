@@ -108,11 +108,31 @@ function generateRows(count) {
             });
             
             // Set split type and totals
-            const splitTypeValue = templateContent.querySelector('.split-type-value');
+            const splitTypeDropdown = templateContent.querySelector('.split-type-dropdown');
             const writerSplitTotal = templateContent.querySelector('.additional-fields:first-child .split-total-value');
             const publisherSplitTotal = templateContent.querySelector('.additional-fields:last-child .split-total-value');
             
-            if (splitTypeValue) splitTypeValue.textContent = splitDatabase[i]?.splitType || 0;
+            // Populate dropdown with split types
+            if (splitTypeDropdown) {
+                // Clear existing options except the first one
+                while (splitTypeDropdown.children.length > 1) {
+                    splitTypeDropdown.removeChild(splitTypeDropdown.lastChild);
+                }
+                
+                // Add options for each split type in the database
+                splitDatabase.forEach(split => {
+                    const option = document.createElement('option');
+                    option.value = split.splitType;
+                    option.textContent = `${split.splitType}: ${split.splitNickname}`;
+                    splitTypeDropdown.appendChild(option);
+                });
+                
+                // Set the current value
+                splitTypeDropdown.value = splitDatabase[i]?.splitType || '';
+            }
+            
+
+            
             if (writerSplitTotal) writerSplitTotal.textContent = calculateWriterSplitTotal(splitDatabase[i]);
             if (publisherSplitTotal) publisherSplitTotal.textContent = calculatePublisherSplitTotal(splitDatabase[i]);
             
@@ -962,10 +982,28 @@ function generateRows(count) {
                         // Always populate the expandable content when split type changes
                         const rowIndex = Array.from(document.querySelectorAll('.registration-row')).indexOf(currentRow);
                         populateInputFields(rowIndex);
+                        
+                        // Update dropdown in expandable content if it exists
+                        const expandableContent = currentRow.nextElementSibling;
+                        if (expandableContent && expandableContent.classList.contains('expandable-content')) {
+                            const splitTypeDropdown = expandableContent.querySelector('.split-type-dropdown');
+                            if (splitTypeDropdown) {
+                                splitTypeDropdown.value = currentValue;
+                            }
+                        }
                     } else {
                         this.style.color = '#ccc';
                         const currentRow = this.closest('.registration-row');
                         currentRow.removeAttribute('data-split-type');
+                        
+                        // Update dropdown in expandable content if it exists
+                        const expandableContent = currentRow.nextElementSibling;
+                        if (expandableContent && expandableContent.classList.contains('expandable-content')) {
+                            const splitTypeDropdown = expandableContent.querySelector('.split-type-dropdown');
+                            if (splitTypeDropdown) {
+                                splitTypeDropdown.value = '';
+                            }
+                        }
                     }
                 });
                 
@@ -991,10 +1029,28 @@ function generateRows(count) {
                         currentRow.setAttribute('data-split-type', inputBox.value);
                         const rowIndex = Array.from(document.querySelectorAll('.registration-row')).indexOf(currentRow);
                         populateInputFields(rowIndex);
+                        
+                        // Update dropdown in expandable content if it exists
+                        const expandableContent = currentRow.nextElementSibling;
+                        if (expandableContent && expandableContent.classList.contains('expandable-content')) {
+                            const splitTypeDropdown = expandableContent.querySelector('.split-type-dropdown');
+                            if (splitTypeDropdown) {
+                                splitTypeDropdown.value = inputBox.value;
+                            }
+                        }
                     } else {
                         inputBox.style.color = '#ccc';
                         const currentRow = inputBox.closest('.registration-row');
                         currentRow.removeAttribute('data-split-type');
+                        
+                        // Update dropdown in expandable content if it exists
+                        const expandableContent = currentRow.nextElementSibling;
+                        if (expandableContent && expandableContent.classList.contains('expandable-content')) {
+                            const splitTypeDropdown = expandableContent.querySelector('.split-type-dropdown');
+                            if (splitTypeDropdown) {
+                                splitTypeDropdown.value = '';
+                            }
+                        }
                     }
                 });
                 
@@ -1008,12 +1064,30 @@ function generateRows(count) {
                             currentRow.setAttribute('data-split-type', inputBox.value);
                             const rowIndex = Array.from(document.querySelectorAll('.registration-row')).indexOf(currentRow);
                             populateInputFields(rowIndex);
+                            
+                            // Update dropdown in expandable content if it exists
+                            const expandableContent = currentRow.nextElementSibling;
+                            if (expandableContent && expandableContent.classList.contains('expandable-content')) {
+                                const splitTypeDropdown = expandableContent.querySelector('.split-type-dropdown');
+                                if (splitTypeDropdown) {
+                                    splitTypeDropdown.value = inputBox.value;
+                                }
+                            }
                         } else {
                             inputBox.style.color = '#ccc';
                             const currentRow = inputBox.closest('.registration-row');
                             currentRow.removeAttribute('data-split-type');
                             const rowIndex = Array.from(document.querySelectorAll('.registration-row')).indexOf(currentRow);
                             populateInputFields(rowIndex);
+                            
+                            // Update dropdown in expandable content if it exists
+                            const expandableContent = currentRow.nextElementSibling;
+                            if (expandableContent && expandableContent.classList.contains('expandable-content')) {
+                                const splitTypeDropdown = expandableContent.querySelector('.split-type-dropdown');
+                                if (splitTypeDropdown) {
+                                    splitTypeDropdown.value = '';
+                                }
+                            }
                         }
                     }
                 });
@@ -4185,13 +4259,14 @@ function populateInputFields(rowIndex) {
             console.log('No existing fields to clear, skipping');
         }
         
-        // Update the split type and split total values in the bottom containers
-        const splitTypeValues = expandableContent.querySelectorAll('.split-type-value');
+                    // Update the split type and split total values in the bottom containers
         const splitTotalValues = expandableContent.querySelectorAll('.split-total-value');
         
-        splitTypeValues.forEach(element => {
-            element.textContent = '0';
-        });
+        // Update dropdown value
+        const splitTypeDropdown = expandableContent.querySelector('.split-type-dropdown');
+        if (splitTypeDropdown) {
+            splitTypeDropdown.value = '';
+        }
         
         splitTotalValues.forEach(element => {
             element.textContent = '0';
@@ -4235,12 +4310,13 @@ function populateInputFields(rowIndex) {
     }
     
     // Update the split type and split total values in the bottom containers
-    const splitTypeValues = expandableContent.querySelectorAll('.split-type-value');
     const splitTotalValues = expandableContent.querySelectorAll('.split-total-value');
     
-    splitTypeValues.forEach(element => {
-        element.textContent = splitData.splitType;
-    });
+    // Update dropdown value
+    const splitTypeDropdown = expandableContent.querySelector('.split-type-dropdown');
+    if (splitTypeDropdown) {
+        splitTypeDropdown.value = splitData.splitType;
+    }
     
     // Update writer and publisher totals separately
     const writerTotal = calculateWriterSplitTotal(splitData);
@@ -4667,6 +4743,35 @@ function addSplitButtonListeners(rowIndex) {
             saveSplitData(currentRowIndex);
         });
     });
+    
+    // Add listener to split type dropdown
+    const splitTypeDropdown = expandableContent.querySelector('.split-type-dropdown');
+    if (splitTypeDropdown) {
+        splitTypeDropdown.addEventListener('change', function() {
+            const currentRow = this.closest('.expandable-content').previousElementSibling;
+            const currentRowIndex = Array.from(document.querySelectorAll('.registration-row')).indexOf(currentRow);
+            const selectedSplitType = parseInt(this.value) || 0;
+            
+            console.log('Split type dropdown changed for row:', currentRowIndex, 'to:', selectedSplitType);
+            
+            // Update the split type input in the main registration row
+            const row = document.querySelectorAll('.registration-row')[currentRowIndex];
+            const allInputs = row.querySelectorAll('input');
+            if (allInputs[4]) { // Split type input
+                allInputs[4].value = selectedSplitType;
+                
+                // Update the color based on split type
+                if (selectedSplitType !== 0) {
+                    allInputs[4].style.color = '#000';
+                } else {
+                    allInputs[4].style.color = '#ccc';
+                }
+            }
+            
+            // Update the split type display and populate fields
+            populateInputFields(currentRowIndex);
+        });
+    }
 }
 
 // Function to save split data to the database
@@ -5434,13 +5539,14 @@ function clearSelectedSplitData(rowIndex, checkboxes) {
         }
         
         // Update split type display
-        const splitTypeValues = expandableContent.querySelectorAll('.split-type-value');
-        splitTypeValues.forEach(element => {
-            element.textContent = '0';
-        });
+        const splitTypeDropdown = expandableContent.querySelector('.split-type-dropdown');
+        
+        if (splitTypeDropdown) {
+            splitTypeDropdown.value = '';
+        }
         
         // Update split totals to 0
-    const splitTotalValues = expandableContent.querySelectorAll('.split-total-value');
+        const splitTotalValues = expandableContent.querySelectorAll('.split-total-value');
         splitTotalValues.forEach(element => {
             element.textContent = '0';
         });
