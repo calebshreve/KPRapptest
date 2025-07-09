@@ -66,6 +66,12 @@ function generateRows(count) {
     // Save current row data before clearing
     const savedRowData = saveCurrentRowData();
     
+    // Save lock states before clearing
+    let savedLockStates = null;
+    if (typeof saveLockStates === 'function') {
+        savedLockStates = saveLockStates();
+    }
+    
     console.log('Container found, clearing and generating rows');
     rowsContainer.innerHTML = '';
     
@@ -1147,6 +1153,11 @@ function generateRows(count) {
                             if (publisherContainer) {
                                 addSplitTotalListeners(publisherContainer, rowIndex);
                             }
+                            
+                            // Restore lock state if row was locked
+                            if (typeof restoreLockState === 'function') {
+                                restoreLockState(rowIndex);
+                            }
                         }, 100);
                     }
                 });
@@ -1161,18 +1172,27 @@ function generateRows(count) {
                 lockIcon.style.height = '16px';
                 lockIcon.style.marginLeft = '20px';
                 lockIcon.style.cursor = 'pointer';
-                lockIcon.alt = 'Lock';
-                lockIcon.title = 'Lock';
+                lockIcon.alt = 'Unlock';
+                lockIcon.title = 'Unlocked';
                 
                 // Add click event to toggle lock state
                 lockIcon.addEventListener('click', function(e) {
                     e.stopPropagation();
+                    const currentRow = this.closest('.registration-row');
+                    const rowIndex = Array.from(document.querySelectorAll('.registration-row')).indexOf(currentRow);
+                    
                     if (this.src.includes('lock.svg')) {
+                        // Currently unlocked, lock the row
                         this.src = 'Rego Icons/lockblack.svg';
-                        this.title = 'Unlocked';
-                    } else {
-                        this.src = 'Rego Icons/lock.svg';
                         this.title = 'Locked';
+                        this.alt = 'Lock';
+                        lockRow(rowIndex);
+                    } else {
+                        // Currently locked, unlock the row
+                        this.src = 'Rego Icons/lock.svg';
+                        this.title = 'Unlocked';
+                        this.alt = 'Unlock';
+                        unlockRow(rowIndex);
                     }
                 });
                 
@@ -1248,6 +1268,11 @@ function generateRows(count) {
                         if (publisherContainer) {
                             addSplitTotalListeners(publisherContainer, rowIndex);
                         }
+                        
+                        // Restore lock state if row was locked
+                        if (typeof restoreLockState === 'function') {
+                            restoreLockState(rowIndex);
+                        }
                     }, 100); // Small delay to ensure DOM is ready
                 }
                 // Dispatch event to sync view/hide text
@@ -1268,6 +1293,14 @@ function generateRows(count) {
     });
     
     console.log('All rows generated successfully');
+    
+    // Restore lock states after row generation
+    if (typeof restoreLockStates === 'function' && savedLockStates) {
+        // Small delay to ensure all rows are fully generated
+        setTimeout(() => {
+            restoreLockStates(savedLockStates);
+        }, 50);
+    }
     
     // Expand the first row only on initial page load
     if (isInitialLoad) {
@@ -1306,6 +1339,11 @@ function generateRows(count) {
                     }
                     if (publisherContainer) {
                         addSplitTotalListeners(publisherContainer, 0);
+                    }
+                    
+                    // Restore lock state if row was locked
+                    if (typeof restoreLockState === 'function') {
+                        restoreLockState(0);
                     }
                 }, 100); // Small delay to ensure DOM is ready
             }
